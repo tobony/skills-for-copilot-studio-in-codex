@@ -1,12 +1,10 @@
 ---
-user-invocable: false
-description: Push/pull Copilot Studio agent content via the VS Code extension's LanguageServerHost LSP binary. Handles authentication (interactive browser login for push/pull, device code flow for chat token), sync push, sync pull, clone, and diff operations.
-argument-hint: <push|pull|clone|changes|validate|publish|auth|list-agents|list-envs>
-allowed-tools: Bash(node *manage-agent.bundle.js *), Read, Glob, Grep
-context: fork
-agent: copilot-studio-manage
+name: manage-agent
+description: >
+  Push/pull Copilot Studio agent content via the VS Code extension's LanguageServerHost LSP
+  binary. Handles authentication (interactive browser login for push/pull, device code flow for
+  chat token), sync push, sync pull, clone, and diff operations.
 ---
-
 # Manage Agent
 
 Push and pull Copilot Studio agent content by calling the VS Code extension's LanguageServerHost binary directly, using the same custom LSP protocol the extension uses internally.
@@ -15,16 +13,16 @@ Push and pull Copilot Studio agent content by calling the VS Code extension's La
 
 This is a new capability under active development. The manage-agent scripts (`manage-agent.bundle.js`, `chat-with-agent.bundle.js`) are pre-built bundles that must not be modified, patched, or monkey-patched. If a script fails:
 
-1. **Report the error as-is** — show the user the full error output
-2. **Do not attempt to fix, patch, or work around script errors** — the scripts interact with the LSP binary using a specific protocol and any modifications will break things
+1. **Report the error as-is** ??show the user the full error output
+2. **Do not attempt to fix, patch, or work around script errors** ??the scripts interact with the LSP binary using a specific protocol and any modifications will break things
 3. **Direct the user to raise an issue** at https://github.com/microsoft/skills-for-copilot-studio/issues with the error output
-4. **Suggest using the VS Code extension directly** — the user can perform the same push/pull/clone operations from the Copilot Studio VS Code extension UI as a fallback
+4. **Suggest using the VS Code extension directly** ??the user can perform the same push/pull/clone operations from the Copilot Studio VS Code extension UI as a fallback
 
 ## Prerequisites
 
 1. **Copilot Studio VS Code extension** must be installed (`ms-copilotstudio.vscode-copilotstudio`).
-2. **Azure AD app registration** (optional) — only needed for device code flow (`auth` command). If `--client-id` is omitted, the script uses VS Code's first-party client ID with interactive browser login instead.
-3. **Environment details** — tenant ID, environment ID, environment URL, and agent management URL. These come from the `.mcs/conn.json` inside a cloned agent workspace (created automatically during clone).
+2. **Azure AD app registration** (optional) ??only needed for device code flow (`auth` command). If `--client-id` is omitted, the script uses VS Code's first-party client ID with interactive browser login instead.
+3. **Environment details** ??tenant ID, environment ID, environment URL, and agent management URL. These come from the `.mcs/conn.json` inside a cloned agent workspace (created automatically during clone).
 
 ## Phase 0: Resolve Configuration
 
@@ -36,7 +34,7 @@ There are **two different auth flows** depending on the operation:
 
 ### For push / pull / clone / changes / list-agents (interactive browser login)
 
-These commands use VS Code's first-party client ID with the **Island API gateway**. Authentication is **interactive** — a browser window opens automatically for sign-in. No manual code entry is needed.
+These commands use VS Code's first-party client ID with the **Island API gateway**. Authentication is **interactive** ??a browser window opens automatically for sign-in. No manual code entry is needed.
 
 - On first use, a browser window opens for Microsoft sign-in
 - Tokens are cached in the OS credential store and silently refreshed for ~90 days
@@ -44,20 +42,20 @@ These commands use VS Code's first-party client ID with the **Island API gateway
 
 **No separate auth step is needed before push/pull.** The commands handle token acquisition automatically. Just run the command directly (Phase 2).
 
-### For the `auth` command (device code flow — chat/test token)
+### For the `auth` command (device code flow ??chat/test token)
 
 The `auth` command acquires a generic `api.powerplatform.com` token using **device code flow**. This token is used by the chat and test skills, not by push/pull.
 
 Run with a **5-minute timeout**:
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js auth \
+node ../../scripts/manage-agent.bundle.js auth \
   --tenant-id "<tenantId>" \
   --client-id "<clientId>" \
   --environment-url "<environmentUrl>"
 ```
 
-**Timeout: 300000ms (5 minutes)** — set this on the Bash tool call.
+**Timeout: 300000ms (5 minutes)** ??set this on the Bash tool call.
 
 ### Token caching and silent refresh
 
@@ -83,7 +81,7 @@ The script emits a JSON line to stdout:
 >
 > The command is waiting for you to complete sign-in. You have {expiresIn/60} minutes.
 
-The command will automatically continue once the user completes authentication. **Do NOT cancel the command** — it is waiting for the browser sign-in to complete.
+The command will automatically continue once the user completes authentication. **Do NOT cancel the command** ??it is waiting for the browser sign-in to complete.
 
 Two tokens are acquired sequentially (Copilot Studio API, then Dataverse API), so the user may need to authenticate **twice** on first use.
 
@@ -104,7 +102,7 @@ All commands auto-detect the agent directory (finds the subfolder with `.mcs/con
 `--client-id` is optional. When omitted, uses VS Code's 1p client with interactive browser login.
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js pull \
+node ../../scripts/manage-agent.bundle.js pull \
   --workspace "<path-to-agent-folder>" \
   --tenant-id "<tenantId>" \
   --environment-id "<envId>" \
@@ -119,7 +117,7 @@ node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js pull \
 Push automatically validates all `.mcs.yml` files before pushing and blocks if there are errors. Add `--force` to bypass validation (not recommended).
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js push \
+node ../../scripts/manage-agent.bundle.js push \
   --workspace "<path-to-agent-folder>" \
   --tenant-id "<tenantId>" \
   --environment-id "<envId>" \
@@ -132,7 +130,7 @@ node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js push \
 Validates all `.mcs.yml` files in the workspace using the LSP binary's full diagnostics (YAML structure, Power Fx, schema, cross-file references).
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js validate \
+node ../../scripts/manage-agent.bundle.js validate \
   --workspace "<path-to-agent-folder>" \
   --tenant-id "<tenantId>" \
   --environment-id "<envId>" \
@@ -149,7 +147,7 @@ Requires either `--agent-id` (the bot GUID from `list-agents`) **or** `--url` (a
 **With explicit IDs:**
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js clone \
+node ../../scripts/manage-agent.bundle.js clone \
   --workspace "<target-folder>" \
   --tenant-id "<tenantId>" \
   --environment-id "<envId>" \
@@ -161,7 +159,7 @@ node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js clone \
 **With a Copilot Studio URL (recommended shortcut):**
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js clone \
+node ../../scripts/manage-agent.bundle.js clone \
   --workspace "<target-folder>" \
   --tenant-id "<tenantId>" \
   --url "https://copilotstudio.microsoft.com/environments/<envId>/bots/<agentId>/overview"
@@ -174,7 +172,7 @@ When `--url` is provided, the script extracts `environmentId` and `agentId` from
 `--client-id` is optional. When omitted, uses VS Code's 1p client with interactive browser login.
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js changes \
+node ../../scripts/manage-agent.bundle.js changes \
   --workspace "<path-to-agent-folder>" \
   --tenant-id "<tenantId>" \
   --environment-id "<envId>" \
@@ -186,19 +184,19 @@ node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js changes \
 
 Publishes the agent so that the current draft becomes the live version reachable by external clients (`/chat-with-agent`, `/run-tests`, Teams, etc.). Uses the Dataverse `PvaPublish` bound action directly (no LSP binary needed).
 
-**IMPORTANT — Publishing makes this version of the agent available to ALL users the agent is shared with.** If you are working in a development environment this is fine, but if the agent is shared with production users, **always confirm with the user before publishing.** Ask: "This will publish the agent and make it live for all users it's shared with. Should I proceed?"
+**IMPORTANT ??Publishing makes this version of the agent available to ALL users the agent is shared with.** If you are working in a development environment this is fine, but if the agent is shared with production users, **always confirm with the user before publishing.** Ask: "This will publish the agent and make it live for all users it's shared with. Should I proceed?"
 
 The command polls the `publishedon` field on the bot entity until the timestamp changes, confirming that publish has taken effect. Default timeout is 5 minutes.
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js publish \
+node ../../scripts/manage-agent.bundle.js publish \
   --workspace "<path-to-agent-folder>" \
   --tenant-id "<tenantId>" \
   --environment-url "<envUrl>" \
   [--timeout <ms>]
 ```
 
-**Timeout: 300000ms (5 minutes)** — set this on the Bash tool call.
+**Timeout: 300000ms (5 minutes)** ??set this on the Bash tool call.
 
 Optional: `--agent-id "<agentId>"` overrides the bot ID from `conn.json`.
 
@@ -210,15 +208,15 @@ Optional: `--agent-id "<agentId>"` overrides the bot ID from `conn.json`.
 #### When to publish
 
 - After a successful `push`, if the user wants changes to be testable via `/chat-with-agent` or `/run-tests`
-- In an improvement loop (edit → push → publish → test), publish is required between push and test
-- The command confirms publish completion via API — **do not use time-based waits**
+- In an improvement loop (edit ??push ??publish ??test), publish is required between push and test
+- The command confirms publish completion via API ??**do not use time-based waits**
 
 ### List Agents
 
 Uses Dataverse REST API directly (no LSP binary needed). `--client-id` is optional.
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js list-agents \
+node ../../scripts/manage-agent.bundle.js list-agents \
   --tenant-id "<tenantId>" \
   --environment-url "<envUrl>" \
   [--no-owner]
@@ -231,7 +229,7 @@ By default lists only agents owned by the current user. Add `--no-owner` to list
 Uses BAP REST API directly (no LSP binary needed). `--client-id` is optional.
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js list-envs \
+node ../../scripts/manage-agent.bundle.js list-envs \
   --tenant-id "<tenantId>"
 ```
 

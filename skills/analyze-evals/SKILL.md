@@ -1,15 +1,10 @@
 ---
-user-invocable: false
+name: analyze-evals
 description: >
-  Analyze exported evaluation results from Copilot Studio's Evaluate tab.
-  The user provides a CSV file exported from the Copilot Studio UI; this skill
-  parses it, identifies failures, and proposes YAML fixes. No API access or
-  published agent required — just the exported CSV.
-allowed-tools: Read, Glob, Grep, Edit
-context: fork
-agent: copilot-studio-test
+  Analyze exported evaluation results from Copilot Studio's Evaluate tab. The user provides a CSV
+  file exported from the Copilot Studio UI; this skill parses it, identifies failures, and
+  proposes YAML fixes. No API access or published agent required ??just the exported CSV.
 ---
-
 # Analyze Copilot Studio Evaluation Results
 
 Analyze evaluation results exported from the Copilot Studio UI as CSV.
@@ -37,10 +32,10 @@ Analyze evaluation results exported from the Copilot Studio UI as CSV.
 1. **Focus on failed evaluations** (`result_1` = `Fail`, or any `result_N` = `Fail`).
 
 2. For each failure, use the `explanation` column to understand the issue:
-   - **"Question not answered"** — The agent couldn't handle the question. Check if there's a matching topic or knowledge source.
-   - **"Knowledge sources not cited"** — The agent responded but didn't cite sources. Check knowledge source configuration and `SearchAndSummarizeContent` nodes.
-   - **"Seems incomplete"** — The response was partial. Check topic flow for early exits, missing branches, or incomplete `SendActivity` messages.
-   - Error messages in `actualResponse` (e.g., `GenAIToolPlannerRateLimitReached`) — These are runtime errors, not authoring issues. Flag them to the user as transient failures to retry.
+   - **"Question not answered"** ??The agent couldn't handle the question. Check if there's a matching topic or knowledge source.
+   - **"Knowledge sources not cited"** ??The agent responded but didn't cite sources. Check knowledge source configuration and `SearchAndSummarizeContent` nodes.
+   - **"Seems incomplete"** ??The response was partial. Check topic flow for early exits, missing branches, or incomplete `SendActivity` messages.
+   - Error messages in `actualResponse` (e.g., `GenAIToolPlannerRateLimitReached`) ??These are runtime errors, not authoring issues. Flag them to the user as transient failures to retry.
 
 ## Phase 3: Propose Fixes
 
@@ -55,8 +50,8 @@ Analyze evaluation results exported from the Copilot Studio UI as CSV.
    - What the proposed change is (show the diff)
 
 3. **Wait for user decision**. The user can:
-   - **Accept all** — apply all proposed changes
-   - **Accept partially** — apply only some changes (ask which ones)
-   - **Reject** — discard proposed changes and discuss alternative approaches
+   - **Accept all** ??apply all proposed changes
+   - **Accept partially** ??apply only some changes (ask which ones)
+   - **Reject** ??discard proposed changes and discuss alternative approaches
 
 4. **Apply accepted changes** using the Edit tool. After applying, remind the user to push and publish again before re-running evaluations.

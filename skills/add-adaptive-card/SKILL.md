@@ -1,15 +1,13 @@
 ---
-user-invocable: false
-description: Generate and insert an Adaptive Card into a Copilot Studio topic using AdaptiveCardPrompt. Use when the user asks to add an adaptive card, rich card, form card, info card, confirmation card, or interactive card to a topic.
-argument-hint: <card-type> in <topic-name>
-allowed-tools: Bash(node *schema-lookup.bundle.js *), Read, Write, Edit, Glob
-context: fork
-agent: copilot-studio-author
+name: add-adaptive-card
+description: >
+  Generate and insert an Adaptive Card into a Copilot Studio topic using AdaptiveCardPrompt. Use
+  when the user asks to add an adaptive card, rich card, form card, info card, confirmation card,
+  or interactive card to a topic.
 ---
-
 # Add Adaptive Card
 
-Add an `AdaptiveCardPrompt` node to an existing Copilot Studio topic. Use this for all Adaptive Card scenarios — display-only cards, input forms, and confirmation flows.
+Add an `AdaptiveCardPrompt` node to an existing Copilot Studio topic. Use this for all Adaptive Card scenarios ??display-only cards, input forms, and confirmation flows.
 
 ## Instructions
 
@@ -30,12 +28,12 @@ Add an `AdaptiveCardPrompt` node to an existing Copilot Studio topic. Use this f
 4. **Verify the schema** if needed:
    ```bash
    # Copilot Studio node schema
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js summary AdaptiveCardPrompt
+   node ../../scripts/schema-lookup.bundle.js summary AdaptiveCardPrompt
 
-   # Adaptive Cards element schema (v1.6 — the version supported by Copilot Studio)
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js ac-summary TextBlock
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js ac-summary Input.Text
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js ac-search Action
+   # Adaptive Cards element schema (v1.6 ??the version supported by Copilot Studio)
+   node ../../scripts/schema-lookup.bundle.js ac-summary TextBlock
+   node ../../scripts/schema-lookup.bundle.js ac-summary Input.Text
+   node ../../scripts/schema-lookup.bundle.js ac-search Action
    ```
 
 5. **Select and adapt the template** from [card-templates.md](card-templates.md) matching the requested type.
@@ -46,7 +44,7 @@ Add an `AdaptiveCardPrompt` node to an existing Copilot Studio topic. Use this f
 
 8. **Validate** the updated topic file:
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js validate <topic-file.yml>
+   node ../../scripts/schema-lookup.bundle.js validate <topic-file.yml>
    ```
 
 9. **Inform the user** that they must push (VS Code Extension) and publish (Copilot Studio UI) before testing with `/chat-with-agent` or `/run-tests`.
@@ -76,26 +74,26 @@ Add an `AdaptiveCardPrompt` node to an existing Copilot Studio topic. Use this f
 ```
 
 **Rules**:
-- `card: |` — the literal block scalar is mandatory. Do not use `card: >` or inline the JSON without it.
+- `card: |` ??the literal block scalar is mandatory. Do not use `card: >` or inline the JSON without it.
 - `$schema` and `version` are required inside the card JSON.
 - The `output.binding` maps each card input `id` to a topic variable (`Topic.VarName`, no `=` prefix).
 - `outputType.properties` must declare a type for every bound field.
-- Use plain `binding:` — no `kind:` property inside it.
-- **Every `AdaptiveCardPrompt` must have `output`, `outputType`, and an `Action.Submit` button** — including display-only info cards. Omitting any of these causes VS Code extension errors (`MissingRequiredProperty`, `AdaptiveCardMissingActionSubmit`).
+- Use plain `binding:` ??no `kind:` property inside it.
+- **Every `AdaptiveCardPrompt` must have `output`, `outputType`, and an `Action.Submit` button** ??including display-only info cards. Omitting any of these causes VS Code extension errors (`MissingRequiredProperty`, `AdaptiveCardMissingActionSubmit`).
 - For info cards with no meaningful inputs, add an `Action.Submit` (e.g. "OK") and bind a dummy acknowledgement variable (`Topic.CardAcknowledged`, type `String`).
 
 ## Node Comparison
 
 | Node | Use When |
 |------|----------|
-| `AdaptiveCardPrompt` | Any Adaptive Card — with or without input fields |
+| `AdaptiveCardPrompt` | Any Adaptive Card ??with or without input fields |
 | `SendActivity` | Plain text messages with optional `{}` variable interpolation |
 
 Do NOT use `SendActivity` with an `attachments` array for Adaptive Cards.
 
 ## Field Validation
 
-Do NOT use `style: "Email"` or `style: "Tel"` for validation — these only change the mobile keyboard and do not validate on submit. Always use `regex`:
+Do NOT use `style: "Email"` or `style: "Tel"` for validation ??these only change the mobile keyboard and do not validate on submit. Always use `regex`:
 
 ```json
 {
@@ -123,10 +121,10 @@ Do NOT use `style: "Email"` or `style: "Tel"` for validation — these only chan
 
 | Approach | Validates on submit? | Notes |
 |----------|---------------------|-------|
-| `regex` | Yes — blocks submit if pattern fails | Use for email, phone, any format |
-| `isRequired: true` | Yes — blocks submit if empty | Mandatory fields |
-| `style: "Email"` | No | Keyboard hint only — never use for validation |
-| `style: "Tel"` | No | Keyboard hint only — never use for validation |
+| `regex` | Yes ??blocks submit if pattern fails | Use for email, phone, any format |
+| `isRequired: true` | Yes ??blocks submit if empty | Mandatory fields |
+| `style: "Email"` | No | Keyboard hint only ??never use for validation |
+| `style: "Tel"` | No | Keyboard hint only ??never use for validation |
 
 > **Rule**: Every `Input.ChoiceSet` (and any required input) must have a `label` property, or the VS Code extension raises `AdaptiveCardInputIsRequiredMissingLabel`.
 
@@ -154,7 +152,7 @@ outputType:
 
 ## Dynamic Text Around Cards
 
-Card JSON is static — Power Fx expressions and `{}` interpolation do not work inside the card body. Use `SendActivity` before or after `AdaptiveCardPrompt` for dynamic content:
+Card JSON is static ??Power Fx expressions and `{}` interpolation do not work inside the card body. Use `SendActivity` before or after `AdaptiveCardPrompt` for dynamic content:
 
 ```yaml
 - kind: SendActivity

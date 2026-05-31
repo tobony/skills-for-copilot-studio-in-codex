@@ -1,12 +1,9 @@
 ---
-user-invocable: false
-description: Add child agents, connected agents, or other multi-agent patterns to a Copilot Studio agent. Use when the user asks to create a sub-agent, child agent, connected agent, or call another agent.
-argument-hint: <agent description>
-allowed-tools: Bash(node *schema-lookup.bundle.js *), Read, Write, Glob
-context: fork
-agent: copilot-studio-author
+name: add-other-agents
+description: >
+  Add child agents, connected agents, or other multi-agent patterns to a Copilot Studio agent. Use
+  when the user asks to create a sub-agent, child agent, connected agent, or call another agent.
 ---
-
 # Add Other Agents
 
 Add multi-agent capabilities to a Copilot Studio agent. Two patterns are supported:
@@ -34,52 +31,52 @@ Create a new child agent (AgentDialog) that the parent agent's orchestrator can 
 
 2. **Look up the AgentDialog schema**:
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js resolve AgentDialog
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js resolve OnToolSelected
+   node ../../scripts/schema-lookup.bundle.js resolve AgentDialog
+   node ../../scripts/schema-lookup.bundle.js resolve OnToolSelected
    ```
 
 3. **Determine from the user**:
    - Child agent name and display name
    - What the child agent specializes in (for the description and instructions)
    - What inputs the child agent needs (if any)
-   - Whether it will need its own knowledge sources (handled in Phase 2 — see below)
+   - Whether it will need its own knowledge sources (handled in Phase 2 ??see below)
 
-4. **Create the child agent directory** (Phase 1 — plain agent only, NO knowledge):
+4. **Create the child agent directory** (Phase 1 ??plain agent only, NO knowledge):
    ```
    <parent-agent>/agents/<ChildAgentName>/
-   └── agent.mcs.yml
+   ?붴?? agent.mcs.yml
    ```
 
-5. **Generate `agent.mcs.yml`** using `${CLAUDE_SKILL_DIR}/../../templates/agents/child-agent.mcs.yml` as the starting template. Read the template, then customize all placeholder values (`<...>`) based on the user's requirements.
+5. **Generate `agent.mcs.yml`** using `../../templates/agents/child-agent.mcs.yml` as the starting template. Read the template, then customize all placeholder values (`<...>`) based on the user's requirements.
 
    Key structure:
-   - `kind: AgentDialog` — marks this as a child agent
-   - `beginDialog.kind: OnToolSelected` with a `description` — tells the parent orchestrator when to route here
-   - `settings.instructions` — the child agent's system prompt
-   - `inputType` — context the orchestrator passes in
-   - `outputType` — what the child agent returns (use `outputType: {}` if no structured output is needed)
+   - `kind: AgentDialog` ??marks this as a child agent
+   - `beginDialog.kind: OnToolSelected` with a `description` ??tells the parent orchestrator when to route here
+   - `settings.instructions` ??the child agent's system prompt
+   - `inputType` ??context the orchestrator passes in
+   - `outputType` ??what the child agent returns (use `outputType: {}` if no structured output is needed)
 
-   **CRITICAL: AgentDialog must NOT have `beginDialog.actions`.** Child agents use generative orchestration — all behavior is driven by `settings.instructions`. Do NOT add action nodes (Question, SendActivity, BeginDialog, ConditionGroup, etc.) to the actions array. If the user's scenario requires hardcoded action flows, it should be an AdaptiveDialog topic in the parent agent, not a child agent.
+   **CRITICAL: AgentDialog must NOT have `beginDialog.actions`.** Child agents use generative orchestration ??all behavior is driven by `settings.instructions`. Do NOT add action nodes (Question, SendActivity, BeginDialog, ConditionGroup, etc.) to the actions array. If the user's scenario requires hardcoded action flows, it should be an AdaptiveDialog topic in the parent agent, not a child agent.
 
 6. **Key fields explained**:
-   - `beginDialog.description` — This is what the parent orchestrator reads to decide when to route. Be specific and action-oriented (e.g., "This agent handles billing inquiries, refund requests, and payment issues").
-   - `settings.instructions` — The child agent's system prompt. Define its personality, scope, and behavior guidelines.
-   - `inputType` — for context the orchestrator should pass. The parent fills these automatically.
+   - `beginDialog.description` ??This is what the parent orchestrator reads to decide when to route. Be specific and action-oriented (e.g., "This agent handles billing inquiries, refund requests, and payment issues").
+   - `settings.instructions` ??The child agent's system prompt. Define its personality, scope, and behavior guidelines.
+   - `inputType` ??for context the orchestrator should pass. The parent fills these automatically.
 
 ### Two-Phase Workflow (Important)
 
 Child agents MUST be created in two phases:
 
-**Phase 1 — Create the plain agent** (steps 1-6 above):
+**Phase 1 ??Create the plain agent** (steps 1-6 above):
 - Create ONLY `agent.mcs.yml` with configuration, instructions, inputs, and outputs.
 - Do NOT create a `knowledge/` directory or any knowledge sources yet.
 - Tell the user: "The child agent has been created. Please push these changes to your environment using the Copilot Studio VS Code Extension before we can add knowledge sources to it."
 
-**Phase 2 — Add knowledge sources** (only after the user confirms they pushed):
+**Phase 2 ??Add knowledge sources** (only after the user confirms they pushed):
 - Once the user confirms the child agent has been pushed and exists in the environment, you can add knowledge sources to it using `/add-knowledge`.
 - Create the `knowledge/` directory under the child agent and add knowledge source files there.
 
-This constraint exists because knowledge sources reference the agent they belong to — the child agent must exist in the environment first.
+This constraint exists because knowledge sources reference the agent they belong to ??the child agent must exist in the environment first.
 
 ### Example: Customer Support Child Agent
 
@@ -125,17 +122,17 @@ Call an external, independently-managed agent from your agent. This creates a `T
 
 ### What you can do (calling side)
 
-The plugin creates the **calling side** YAML — a TaskDialog in your agent that invokes the connected agent with inputs/outputs.
+The plugin creates the **calling side** YAML ??a TaskDialog in your agent that invokes the connected agent with inputs/outputs.
 
 ### What the user must do (called side)
 
 The connected agent must be configured separately (in Copilot Studio UI or in its own project). Tell the user they need to set up the following on the connected agent:
 
-1. **Create an `OnRedirect` topic** — this is the entry point when the agent is called by another agent
+1. **Create an `OnRedirect` topic** ??this is the entry point when the agent is called by another agent
 2. **Create global variables** for each input the caller passes, with **"external source"** permissions enabled
 3. **Declare `inputType: {}` and `outputType: {}`** on the OnRedirect topic to signal it participates in multi-agent scenarios
 
-> **Important**: The connected agent must be published and accessible from the same environment or tenant. The `botSchemaName` (the connected agent's schema name) must be known — the user can find it in the connected agent's `settings.mcs.yml` or in Copilot Studio under Agent Details.
+> **Important**: The connected agent must be published and accessible from the same environment or tenant. The `botSchemaName` (the connected agent's schema name) must be known ??the user can find it in the connected agent's `settings.mcs.yml` or in Copilot Studio under Agent Details.
 
 ### Instructions
 
@@ -145,7 +142,7 @@ The connected agent must be configured separately (in Copilot Studio UI or in it
    ```
 
 2. **Determine from the user**:
-   - The connected agent's schema name (`botSchemaName`) — e.g., `cr123_expenseAgent`
+   - The connected agent's schema name (`botSchemaName`) ??e.g., `cr123_expenseAgent`
    - What inputs to pass to the connected agent
    - A description of what the connected agent does (for the orchestrator)
 

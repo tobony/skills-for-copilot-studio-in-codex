@@ -1,15 +1,10 @@
 ---
-user-invocable: false
+name: test-auth
 description: >
-  Authenticate for Copilot Studio evaluation API and SDK chat. Caches a token
-  that is shared across run-eval and chat-sdk skills. Run this before any
-  eval or SDK chat workflow. Requires an App Registration with MakerOperations
-  and Copilots.Invoke permissions.
-allowed-tools: Bash(node *eval-api.bundle.js auth *), Read, Glob
-context: fork
-agent: copilot-studio-test
+  Authenticate for Copilot Studio evaluation API and SDK chat. Caches a token that is shared
+  across run-eval and chat-sdk skills. Run this before any eval or SDK chat workflow. Requires an
+  App Registration with MakerOperations and Copilots.Invoke permissions.
 ---
-
 # Test Agent Authentication
 
 Authenticate with the Power Platform API for evaluation and SDK chat workflows.
@@ -22,11 +17,11 @@ Locate the agent workspace (directory containing `.mcs/conn.json`):
 Glob: **/agent.mcs.yml
 ```
 
-The `conn.json` provides the tenant ID automatically — no need to ask the user for it.
+The `conn.json` provides the tenant ID automatically ??no need to ask the user for it.
 
 ## Step 2: Get the client ID
 
-**CRITICAL: You MUST present the FULL configuration checklist below when asking for the client ID. Do NOT omit any items — users frequently miss the redirect URI and public client settings, which causes auth failures.**
+**CRITICAL: You MUST present the FULL configuration checklist below when asking for the client ID. Do NOT omit any items ??users frequently miss the redirect URI and public client settings, which causes auth failures.**
 
 Ask the user for their **App Registration Client ID** and show them **all** of the following requirements in your message:
 
@@ -39,7 +34,7 @@ Ask the user for their **App Registration Client ID** and show them **all** of t
 > 3. **API permissions**: Under **API permissions**, these **delegated** permissions on the **Power Platform API**:
 >    - `CopilotStudio.MakerOperations.Read` (list test sets, get results)
 >    - `CopilotStudio.MakerOperations.ReadWrite` (start evaluation runs)
->    - `CopilotStudio.Copilots.Invoke` (SDK chat — send utterances to the agent)
+>    - `CopilotStudio.Copilots.Invoke` (SDK chat ??send utterances to the agent)
 > 4. **Admin consent**: Granted for the tenant (green checkmarks in the API permissions list)
 >
 > Missing any of these will cause authentication to fail.
@@ -56,15 +51,15 @@ If the user doesn't have one, guide them:
 >    - `CopilotStudio.Copilots.Invoke`
 > 5. Click **Grant admin consent** for the tenant
 > 6. Under **Authentication** > **Add a platform** > **Mobile and desktop applications** > set redirect URI to `http://localhost`
-> 7. Still in **Authentication**, scroll to **Advanced settings** and set **Allow public client flows** to **Yes** (required — without this the interactive browser login will fail with an AADSTS error)
+> 7. Still in **Authentication**, scroll to **Advanced settings** and set **Allow public client flows** to **Yes** (required ??without this the interactive browser login will fail with an AADSTS error)
 > 8. Copy the **Application (client) ID** from the Overview page
 
 ## Step 3: Authenticate
 
-Run the auth command (opens a browser — no device code needed):
+Run the auth command (opens a browser ??no device code needed):
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/eval-api.bundle.js auth --workspace <path> --client-id <id>
+node ../../scripts/eval-api.bundle.js auth --workspace <path> --client-id <id>
 ```
 
 If successful, you'll see:
@@ -72,7 +67,7 @@ If successful, you'll see:
 {"status": "ok", "message": "Authentication successful. Token cached for subsequent commands."}
 ```
 
-**Return the client ID and workspace path to the caller** — they need these for subsequent `run-eval` and `chat-sdk` calls.
+**Return the client ID and workspace path to the caller** ??they need these for subsequent `run-eval` and `chat-sdk` calls.
 
 ## Troubleshooting
 

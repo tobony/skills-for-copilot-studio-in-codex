@@ -1,16 +1,16 @@
 ---
-user-invocable: false
-description: List all topics in the Copilot Studio agent with their trigger types, phrases, and action counts. Use when the user wants to see what topics exist.
-allowed-tools: Read, Glob, Grep
+name: list-topics
+description: >
+  List all topics in the Copilot Studio agent with their trigger types, phrases, and action
+  counts. Use when the user wants to see what topics exist.
 ---
-
 # List Topics in Solution
 
 List all topics in the current agent with their trigger types and details.
 
 ## Instructions
 
-1. **Auto-discover the agent directory** — find all agents via:
+1. **Auto-discover the agent directory** ??find all agents via:
    ```
    Glob: **/agent.mcs.yml
    ```

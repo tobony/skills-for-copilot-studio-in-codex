@@ -1,14 +1,13 @@
 ---
-user-invocable: true
-description: Create plugin development eval scenarios (JSON files with natural prompts and deterministic checks for testing plugin skills). NOT for Copilot Studio in-product evaluation — use /copilot-studio:create-eval-set for that.
-argument-hint: <scenario name>
-allowed-tools: Read, Write, Glob
-context: fork
+name: create-eval
+description: >
+  Create plugin development eval scenarios (JSON files with natural prompts and deterministic
+  checks for testing plugin skills). NOT for Copilot Studio in-product evaluation ??use
+  copilot-studio create-eval-set for that.
 ---
-
 # Create Scenario Eval
 
-Guide the user through creating eval test cases for a Copilot Studio plugin scenario. Evals test end-to-end scenarios with natural prompts — the request routes through sub-agents (e.g., Author agent) which invoke skills internally.
+Guide the user through creating eval test cases for a Copilot Studio plugin scenario. Evals test end-to-end scenarios with natural prompts ??the request routes through sub-agents (e.g., Author agent) which invoke skills internally.
 
 ## How the eval system works
 
@@ -40,15 +39,15 @@ The eval harness (`evals/evaluate.py`) works by:
 
 Note: `no_placeholders` runs automatically when any `.mcs.yml` file is changed, unless explicitly set to `false`.
 
-**Not yet testable**: Integration scenarios that call external APIs (chat-directline, manage-agent) — these need script mocking which isn't implemented yet.
+**Not yet testable**: Integration scenarios that call external APIs (chat-directline, manage-agent) ??these need script mocking which isn't implemented yet.
 
 ## Available fixtures
 
 Fixtures are pre-built agent directories in `evals/fixtures/`:
 
-- **basic-agent** — Minimal agent with `GenerativeActionsEnabled: false`, one Greeting topic. Use for most authoring evals.
-- **agent-with-mcp-action** — Same as basic-agent plus two MCP action files. Use for action-editing evals.
-- **empty-workspace** — No agent files. Use for negative-path testing.
+- **basic-agent** ??Minimal agent with `GenerativeActionsEnabled: false`, one Greeting topic. Use for most authoring evals.
+- **agent-with-mcp-action** ??Same as basic-agent plus two MCP action files. Use for action-editing evals.
+- **empty-workspace** ??No agent files. Use for negative-path testing.
 
 If the scenario needs a richer agent (e.g., existing topics to modify, knowledge sources, actions), note that the fixture would need to be created first.
 
@@ -71,7 +70,7 @@ If the scenario needs a richer agent (e.g., existing topics to modify, knowledge
 4. **Guide the user through creating test cases.** For each eval, gather:
 
    - **name**: Short descriptive title (e.g., "IT support topic with OnRecognizedIntent trigger")
-   - **prompt**: A natural language prompt — what a real user would say. Do NOT prefix with "Use the X skill to...".
+   - **prompt**: A natural language prompt ??what a real user would say. Do NOT prefix with "Use the X skill to...".
    - **fixture**: Which fixture agent to use (default: `basic-agent`)
    - **checks**: What to validate about the routing and output
 
@@ -145,7 +144,7 @@ If the scenario needs a richer agent (e.g., existing topics to modify, knowledge
        {
          "id": 1,
          "name": "<short descriptive title>",
-         "prompt": "<natural language request — what a user would say>",
+         "prompt": "<natural language request ??what a user would say>",
          "fixture": "basic-agent",
          "mock_scripts": [],
          "checks": { ... }
@@ -164,10 +163,10 @@ If the scenario needs a richer agent (e.g., existing topics to modify, knowledge
 
 ## Important guidelines
 
-- Prompts must be **natural language** — write what a real user would say, not "Use the X skill to..."
+- Prompts must be **natural language** ??write what a real user would say, not "Use the X skill to..."
 - Include `agent_invoked` and `skill_invoked` checks to verify correct routing
 - Keep prompts specific enough that checks can be deterministic (mention exact names, values, counts)
-- Use `schema_validate: true` for ALL scenarios that produce YAML — it's the most powerful check
+- Use `schema_validate: true` for ALL scenarios that produce YAML ??it's the most powerful check
 - `content_contains` keywords should come directly from the prompt to verify domain relevance
 - Don't create evals for deprecated skills (chat-with-agent, directline-chat)
 - Eval IDs must be unique integers within a scenario's JSON

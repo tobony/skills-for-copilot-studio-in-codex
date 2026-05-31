@@ -1,12 +1,9 @@
 ---
-user-invocable: false
-description: Create a new Copilot Studio topic YAML file. Use when the user asks to create a new topic, conversation flow, or dialog for their agent.
-argument-hint: <topic description>
-allowed-tools: Bash(node *schema-lookup.bundle.js *), Bash(node *manage-agent.bundle.js *), Read, Write, Glob
-context: fork
-agent: copilot-studio-author
+name: new-topic
+description: >
+  Create a new Copilot Studio topic YAML file. Use when the user asks to create a new topic,
+  conversation flow, or dialog for their agent.
 ---
-
 # Create New Topic
 
 Generate a new Copilot Studio topic YAML file based on user requirements.
@@ -19,32 +16,32 @@ Generate a new Copilot Studio topic YAML file based on user requirements.
    ```
    If multiple agents found, ask which one. NEVER hardcode an agent name.
 
-2. **Check for matching templates** in `${CLAUDE_SKILL_DIR}/../../templates/topics/` first:
-   - `greeting.topic.mcs.yml` — OnConversationStart greeting
-   - `fallback.topic.mcs.yml` — OnUnknownIntent fallback with escalation
-   - `arithmeticsum.topic.mcs.yml` — Topic with inputs/outputs and computation
-   - `question-topic.topic.mcs.yml` — Question with branching logic
-   - `search-topic.topic.mcs.yml` — Generative answers from knowledge
-   - `auth-topic.topic.mcs.yml` — Authentication flow
-   - `error-handler.topic.mcs.yml` — Error handling
-   - `disambiguation.topic.mcs.yml` — Multiple topics matched
+2. **Check for matching templates** in `../../templates/topics/` first:
+   - `greeting.topic.mcs.yml` ??OnConversationStart greeting
+   - `fallback.topic.mcs.yml` ??OnUnknownIntent fallback with escalation
+   - `arithmeticsum.topic.mcs.yml` ??Topic with inputs/outputs and computation
+   - `question-topic.topic.mcs.yml` ??Question with branching logic
+   - `search-topic.topic.mcs.yml` ??Generative answers from knowledge
+   - `auth-topic.topic.mcs.yml` ??Authentication flow
+   - `error-handler.topic.mcs.yml` ??Error handling
+   - `disambiguation.topic.mcs.yml` ??Multiple topics matched
    If a template matches, use it as the starting point.
 
 3. **MANDATORY: Verify ALL `kind:` values against the schema** before writing them:
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js kinds                    # List all valid kind values
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js resolve AdaptiveDialog   # Resolve trigger structure
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js resolve <TriggerType>    # Resolve specific trigger
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js search <ActionKind>      # Verify an action kind exists
+   node ../../scripts/schema-lookup.bundle.js kinds                    # List all valid kind values
+   node ../../scripts/schema-lookup.bundle.js resolve AdaptiveDialog   # Resolve trigger structure
+   node ../../scripts/schema-lookup.bundle.js resolve <TriggerType>    # Resolve specific trigger
+   node ../../scripts/schema-lookup.bundle.js search <ActionKind>      # Verify an action kind exists
    ```
-   **NEVER write a `kind:` value you haven't verified exists in the schema.** This is the #1 source of hallucination errors. If `schema-lookup.bundle.js search <kind>` returns no results, the kind does NOT exist — do not use it.
+   **NEVER write a `kind:` value you haven't verified exists in the schema.** This is the #1 source of hallucination errors. If `schema-lookup.bundle.js search <kind>` returns no results, the kind does NOT exist ??do not use it.
 
 4. **Determine the trigger type** from the user's description:
-   - `OnRecognizedIntent` — For topics triggered by user phrases (most common)
-   - `OnConversationStart` — For welcome/greeting topics
-   - `OnUnknownIntent` — For fallback topics
-   - `OnEscalate` — For escalation to human agent
-   - `OnError` — For error handling
+   - `OnRecognizedIntent` ??For topics triggered by user phrases (most common)
+   - `OnConversationStart` ??For welcome/greeting topics
+   - `OnUnknownIntent` ??For fallback topics
+   - `OnEscalate` ??For escalation to human agent
+   - `OnError` ??For error handling
 
 5. **Generate the topic YAML** with:
    - A `# Name:` comment at the top
@@ -59,15 +56,15 @@ Generate a new Copilot Studio topic YAML file based on user requirements.
 
 8. **MANDATORY: Validate the generated file** after saving:
 
-   **Step A: Schema validation** — always run this first:
+   **Step A: Schema validation** ??always run this first:
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js validate <saved-file.yml>
+   node ../../scripts/schema-lookup.bundle.js validate <saved-file.yml>
    ```
 
-   **Step B: LSP-based validation** — also run this if the agent has `.mcs/conn.json`:
+   **Step B: LSP-based validation** ??also run this if the agent has `.mcs/conn.json`:
    Read `.mcs/conn.json` to get connection details, then:
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js validate \
+   node ../../scripts/manage-agent.bundle.js validate \
      --workspace "<path-to-agent-folder>" \
      --tenant-id "<tenantId>" \
      --environment-id "<envId>" \
@@ -97,11 +94,11 @@ beginDialog:
   actions:
     - ...
 ```
-- The orchestrator auto-collects inputs based on the description — no explicit Question node needed.
+- The orchestrator auto-collects inputs based on the description ??no explicit Question node needed.
 - Still use Question nodes when: conditional asks (ask X only if Y), or end-of-flow confirmations.
 
 **Use Topic Outputs** instead of SendActivity for final results.
-Use `outputType` at the root level and `SetVariable` to set output values — do NOT use `TaskOutput` (which is only valid in `TaskDialog` connector actions):
+Use `outputType` at the root level and `SetVariable` to set output values ??do NOT use `TaskOutput` (which is only valid in `TaskDialog` connector actions):
 ```yaml
 kind: AdaptiveDialog
 inputs:
@@ -141,11 +138,11 @@ outputType:
 
 ## Topic-Action Chaining Under Generative Orchestration
 
-When a topic exists alongside other topics or other actions (i.e. TaskDialog), think carefully about **the topic outputs** — it directly affects whether the orchestrator will chain to an action.
+When a topic exists alongside other topics or other actions (i.e. TaskDialog), think carefully about **the topic outputs** ??it directly affects whether the orchestrator will chain to an action.
 
 **Two scenarios:**
 
-1. **Topic is self-contained** (e.g., reservation confirmation, calculation result): The topic does the work itself. It can gather the inputs too or just ask for those, but work is executed into the topic. In such case, output a confirmation/status message. The orchestrator treats the task as done or not, depending on the confirmation — this is correct.
+1. **Topic is self-contained** (e.g., reservation confirmation, calculation result): The topic does the work itself. It can gather the inputs too or just ask for those, but work is executed into the topic. In such case, output a confirmation/status message. The orchestrator treats the task as done or not, depending on the confirmation ??this is correct.
 
 2. **Topic gathers data for an action to consume** (e.g., collecting a complaint that a Teams action should send, without manually calling the action into the topic): The topic output must be the **data itself**, not a confirmation. If you output "Your complaint has been sent!", the orchestrator assumes the job is done and will NOT invoke the action which means the complaint will never be sent. Instead, output the complaint text so the orchestrator can see there's an action to send it and feed it to such action.
 

@@ -1,19 +1,17 @@
 ---
-user-invocable: false
-description: Add or modify a node in an existing Copilot Studio topic. Use when the user asks to add a question, message, condition, variable, or other node to a topic. Do NOT use this for generative answers or knowledge search — use /add-generative-answers instead.
-argument-hint: <node-type> to <topic-name>
-allowed-tools: Bash(node *schema-lookup.bundle.js *), Read, Write, Edit, Glob
-context: fork
-agent: copilot-studio-author
+name: add-node
+description: >
+  Add or modify a node in an existing Copilot Studio topic. Use when the user asks to add a
+  question, message, condition, variable, or other node to a topic. Do NOT use this for generative
+  answers or knowledge search ??use add-generative-answers instead.
 ---
-
 # Add Node to Topic
 
 Add a new node to an existing Copilot Studio topic, or modify an existing one.
 
 In Copilot Studio, the elements inside a topic's `actions` array are **nodes** (SendActivity, Question, ConditionGroup, etc.). These are different from **actions** (`actions/*.mcs.yml`), which are connector-based TaskDialogs. This skill handles nodes within topics.
 
-**For generative answers (SearchAndSummarizeContent, AnswerQuestionWithAI)**, use the `/add-generative-answers` skill instead — it has the specific patterns, follow-up ConditionGroup logic, and disambiguation guidance needed to set them up correctly.
+**For generative answers (SearchAndSummarizeContent, AnswerQuestionWithAI)**, use the `/add-generative-answers` skill instead ??it has the specific patterns, follow-up ConditionGroup logic, and disambiguation guidance needed to set them up correctly.
 
 ## Instructions
 
@@ -30,7 +28,7 @@ In Copilot Studio, the elements inside a topic's `actions` array are **nodes** (
 
 3. **Look up the node schema**:
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js resolve <NodeType>
+   node ../../scripts/schema-lookup.bundle.js resolve <NodeType>
    ```
 
 4. **Read the existing topic file** to understand its current structure.

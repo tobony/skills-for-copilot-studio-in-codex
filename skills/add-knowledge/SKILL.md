@@ -1,12 +1,10 @@
 ---
-user-invocable: false
-description: Add a knowledge source (public website or SharePoint) to a Copilot Studio agent. Use when the user asks to add a knowledge source, documentation URL, website, or SharePoint site for the agent to search.
-argument-hint: <url>
-allowed-tools: Bash(node *schema-lookup.bundle.js *), Read, Write, Glob
-context: fork
-agent: copilot-studio-author
+name: add-knowledge
+description: >
+  Add a knowledge source (public website or SharePoint) to a Copilot Studio agent. Use when the
+  user asks to add a knowledge source, documentation URL, website, or SharePoint site for the
+  agent to search.
 ---
-
 # Add Knowledge Source
 
 Add a knowledge source to the agent. Supports **Public Website**, **SharePoint**, and **Custom API** sources.
@@ -24,9 +22,9 @@ Add a knowledge source to the agent. Supports **Public Website**, **SharePoint**
    - Name / description (optional)
 
 3. **Determine the source type** from the user's request:
-   - If the URL contains `sharepoint.com` → use `SharePointSearchSource` (but first normalize the URL — see below)
-   - If the user wants to connect a **custom search API or database** → use `OnKnowledgeRequested` (see Custom API section below)
-   - Otherwise → use `PublicSiteSearchSource`
+   - If the URL contains `sharepoint.com` ??use `SharePointSearchSource` (but first normalize the URL ??see below)
+   - If the user wants to connect a **custom search API or database** ??use `OnKnowledgeRequested` (see Custom API section below)
+   - Otherwise ??use `PublicSiteSearchSource`
 
 4. **If SharePoint: normalize the URL** before using it. Copilot Studio requires a direct folder path like:
    `https://contoso.sharepoint.com/sites/MySite/Shared%20Documents/MyFolder`
@@ -35,15 +33,15 @@ Add a knowledge source to the agent. Supports **Public Website**, **SharePoint**
 
    | URL pattern | Example | Action |
    |---|---|---|
-   | **Direct path** (`/sites/.../Shared%20Documents/...`) | `https://x.sharepoint.com/sites/Site/Shared%20Documents/Folder` | **Use as-is** — this is the correct format |
+   | **Direct path** (`/sites/.../Shared%20Documents/...`) | `https://x.sharepoint.com/sites/Site/Shared%20Documents/Folder` | **Use as-is** ??this is the correct format |
    | **AllItems.aspx with `?id=` param** (`...AllItems.aspx?id=...`) | `https://x.sharepoint.com/.../AllItems.aspx?id=%2Fsites%2FSite%2FShared%20Documents%2FFolder&viewid=...` | **Extract and decode** the `id` query parameter. URL-decode it to get the path (e.g. `/sites/Site/Shared%20Documents/Folder`), then prepend the origin (`https://x.sharepoint.com`) to build the direct path. Drop all query parameters (`?id=`, `&viewid=`, etc.) |
-   | **Sharing link** (`/:f:/s/...` or `/:x:/s/...`) | `https://x.sharepoint.com/:f:/s/Site/EncodedToken?e=abc` | **Cannot convert** — these are opaque sharing tokens with no extractable folder path. Ask the user: *"That's a SharePoint sharing link — I can't extract the folder path from it. Could you navigate to the folder in SharePoint, copy the URL from the browser address bar, and paste it here?"* |
+   | **Sharing link** (`/:f:/s/...` or `/:x:/s/...`) | `https://x.sharepoint.com/:f:/s/Site/EncodedToken?e=abc` | **Cannot convert** ??these are opaque sharing tokens with no extractable folder path. Ask the user: *"That's a SharePoint sharing link ??I can't extract the folder path from it. Could you navigate to the folder in SharePoint, copy the URL from the browser address bar, and paste it here?"* |
 
    **Encoding rule:** Spaces in the final URL must be encoded as `%20` (e.g. `Shared%20Documents`, not `Shared Documents`).
 
 5. **Look up the knowledge source schema**:
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js resolve KnowledgeSourceConfiguration
+   node ../../scripts/schema-lookup.bundle.js resolve KnowledgeSourceConfiguration
    ```
 
 6. **Generate the knowledge source YAML**.
@@ -77,7 +75,7 @@ Add a knowledge source to the agent. Supports **Public Website**, **SharePoint**
 
 ## Custom API via OnKnowledgeRequested (YAML-only)
 
-When the user wants to connect a **proprietary search API or database** not natively supported by Copilot Studio, use the `OnKnowledgeRequested` trigger. This is a **YAML-only capability with no UI designer** — it intercepts knowledge search requests and lets you call a custom API to populate results.
+When the user wants to connect a **proprietary search API or database** not natively supported by Copilot Studio, use the `OnKnowledgeRequested` trigger. This is a **YAML-only capability with no UI designer** ??it intercepts knowledge search requests and lets you call a custom API to populate results.
 
 **How it works:**
 1. Create a topic with `OnKnowledgeRequested` trigger
@@ -85,17 +83,17 @@ When the user wants to connect a **proprietary search API or database** not nati
 3. Transform API results into the required schema: `Content`, `ContentLocation`, `Title`
 4. Set `System.SearchResults` with the transformed results
 
-**Use the template:** `${CLAUDE_SKILL_DIR}/../../templates/topics/custom-knowledge-source.topic.mcs.yml`
+**Use the template:** `../../templates/topics/custom-knowledge-source.topic.mcs.yml`
 
 **Prerequisites:** The user needs a connector action (in `actions/`) that calls their search API. If they don't have one yet, they should create it through the Copilot Studio UI or VS Code extension first.
 
 ## Dynamic Knowledge URLs with Global Variables
 
-Knowledge source URLs support `{VariableName}` placeholders — typically global variables — for dynamic routing based on user context. This is powerful for scenarios where different users need different knowledge sources (e.g., geolocation-specific SharePoint folders, region-specific documentation).
+Knowledge source URLs support `{VariableName}` placeholders ??typically global variables ??for dynamic routing based on user context. This is powerful for scenarios where different users need different knowledge sources (e.g., geolocation-specific SharePoint folders, region-specific documentation).
 
 **Pattern**: Define a global variable (via `/copilot-studio:add-global-variable`), populate it early in the conversation (e.g., in an OnActivity/conversation-init topic based on user profile or geolocation), then reference it in the knowledge source URL with Power Fx string interpolation.
 
-**SharePoint example** — a workforce agent that routes to different SharePoint folders per region:
+**SharePoint example** ??a workforce agent that routes to different SharePoint folders per region:
 ```yaml
 # Name: Regional HR KB
 # This knowledge source provides HR information from the {Global.UserKBURL} SharePoint.
@@ -105,7 +103,7 @@ source:
   site: =$"{Global.UserKBURL}"
 ```
 
-**Public website example** — documentation site with region-specific subpaths:
+**Public website example** ??documentation site with region-specific subpaths:
 ```yaml
 # Name: Regional Docs
 # Documentation for the user's region at {Global.Region}.
@@ -115,7 +113,7 @@ source:
   site: =$"https://docs.example.com/{Global.Region}/api"
 ```
 
-**CRITICAL: URL format for the global variable value**. The variable must contain a **direct, clean URL** — not a SharePoint UI URL with query parameters. Copilot Studio cannot resolve AllItems.aspx links.
+**CRITICAL: URL format for the global variable value**. The variable must contain a **direct, clean URL** ??not a SharePoint UI URL with query parameters. Copilot Studio cannot resolve AllItems.aspx links.
 
 | Correct (set this in the global variable) | Wrong (will not work) |
 |---|---|

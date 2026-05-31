@@ -1,12 +1,9 @@
 ---
-user-invocable: false
-description: Clone a Copilot Studio agent from the cloud. Guides through environment selection, agent selection, and downloads agent YAML files.
-argument-hint: [agent name or environment hint]
-allowed-tools: Bash(node *manage-agent.bundle.js *), Read, Glob, Grep
-context: fork
-agent: copilot-studio-manage
+name: clone-agent
+description: >
+  Clone a Copilot Studio agent from the cloud. Guides through environment selection, agent
+  selection, and downloads agent YAML files.
 ---
-
 # Clone Agent
 
 Guided flow to clone a Copilot Studio agent from the cloud to a local workspace. Walks the user through environment selection, agent selection, and downloads the agent's YAML files.
@@ -24,7 +21,7 @@ Look for existing connection details in this order. Stop at the first source tha
 
 ### 0a. Scan for existing `.mcs/conn.json` files
 
-Search the filesystem for previously cloned agents — these already have all the connection details:
+Search the filesystem for previously cloned agents ??these already have all the connection details:
 
 ```
 Glob: **/.mcs/conn.json
@@ -39,16 +36,16 @@ Glob: /Users/**/projects/**/.mcs/conn.json
 Each `conn.json` contains `TenantId`, `EnvironmentId`, `DataverseEndpoint`, `AgentManagementEndpoint`, and `AccountInfo`. Parse any found files and collect unique tenant/environment pairs. If matches are found, present them to the user:
 
 > **Found existing agent connections:**
-> 1. Employee Assistant — Elad's Env (tenant: 8a235459...)
-> 2. IT Agent — Contoso Dev (tenant: efb073bb...)
+> 1. Employee Assistant ??Elad's Env (tenant: 8a235459...)
+> 2. IT Agent ??Contoso Dev (tenant: efb073bb...)
 >
 > Use one of these, or enter a different tenant ID?
 
-If the user picks one → extract `tenantId`, `environmentId`, `environmentUrl`, `agentMgmtUrl` and **skip to Phase 2** (or Phase 1 if they want a different environment).
+If the user picks one ??extract `tenantId`, `environmentId`, `environmentUrl`, `agentMgmtUrl` and **skip to Phase 2** (or Phase 1 if they want a different environment).
 
 ### 0b. Check for a Copilot Studio URL
 
-If the user pastes a Copilot Studio URL (e.g. from their browser while viewing the agent), extract environment and agent IDs directly — no need for `list-envs` or `list-agents`.
+If the user pastes a Copilot Studio URL (e.g. from their browser while viewing the agent), extract environment and agent IDs directly ??no need for `list-envs` or `list-agents`.
 
 Recognised URL formats:
 ```
@@ -59,7 +56,7 @@ https://copilotstudio.preview.microsoft.com/environments/<envId>/bots/<agentId>
 If the user provides a URL like this, you still need a `tenantId` (from a `conn.json` or by asking the user). Then **skip to Phase 3**, passing `--url` instead of `--agent-id` / `--environment-id` / `--environment-url` / `--agent-mgmt-url`:
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js clone \
+node ../../scripts/manage-agent.bundle.js clone \
   --workspace "." \
   --tenant-id "<tenantId>" \
   --url "<copilotStudioUrl>"
@@ -69,9 +66,9 @@ The script will parse the URL to extract the environment ID and agent ID, then r
 
 ### 0c. Ask the user
 
-If no `conn.json` found (or user wants a different tenant) → ask for their **tenant ID** (required).
+If no `conn.json` found (or user wants a different tenant) ??ask for their **tenant ID** (required).
 
-No `--client-id` is needed — the script uses VS Code's first-party client ID with interactive browser login automatically.
+No `--client-id` is needed ??the script uses VS Code's first-party client ID with interactive browser login automatically.
 
 ## Phase 1: Select Environment
 
@@ -80,11 +77,11 @@ Tell the user: **"A browser window may open for Microsoft sign-in (tokens are ca
 Run the list-envs command:
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js list-envs \
+node ../../scripts/manage-agent.bundle.js list-envs \
   --tenant-id "<tenantId>"
 ```
 
-**Timeout: 300000ms (5 minutes)** — set this on the Bash tool call to allow time for browser auth.
+**Timeout: 300000ms (5 minutes)** ??set this on the Bash tool call to allow time for browser auth.
 
 Parse the JSON output. On success (`status: "ok"`), present the environments as a numbered list to the user:
 
@@ -102,11 +99,11 @@ Ask the user to pick an environment. Extract:
 
 First, ask the user: **"Do you want to list only agents you own, or all agents in the environment?"**
 
-- If **only mine** → run without `--no-owner` (default, filters by current user)
-- If **all agents** → add `--no-owner` flag
+- If **only mine** ??run without `--no-owner` (default, filters by current user)
+- If **all agents** ??add `--no-owner` flag
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js list-agents \
+node ../../scripts/manage-agent.bundle.js list-agents \
   --tenant-id "<tenantId>" \
   --environment-url "<environmentUrl>" \
   [--no-owner]
@@ -129,7 +126,7 @@ Ask the user to pick an agent. Extract the `agentId`.
 Run the clone command. The workspace should be the current directory (`.`). The `--agent-id` is required (from Phase 2):
 
 ```bash
-node ${CLAUDE_SKILL_DIR}/../../scripts/manage-agent.bundle.js clone \
+node ../../scripts/manage-agent.bundle.js clone \
   --workspace "." \
   --tenant-id "<tenantId>" \
   --agent-id "<agentId>" \

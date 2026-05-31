@@ -1,0 +1,51 @@
+name: Sync upstream for Codex
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge Microsoft upstream
+        shell: bash
+        run: |
+          git remote add upstream https://github.com/microsoft/skills-for-copilot-studio.git || true
+          git fetch upstream main --tags
+          git merge --no-edit upstream/main
+
+      - name: Convert plugin for Codex
+        shell: pwsh
+        run: ./tools/convert-copilot-studio-for-codex.ps1 -PluginRoot .
+
+      - name: Smoke test schema lookup
+        run: node scripts/schema-lookup.bundle.js kinds > /tmp/copilot-studio-kinds.txt
+
+      - name: Commit and push if changed
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No Codex conversion changes."
+            exit 0
+          fi
+
+          git add .
+          upstream_sha="$(git rev-parse --short upstream/main)"
+          git commit -m "Sync upstream for Codex (${upstream_sha})"
+          git push

@@ -1,12 +1,12 @@
 ---
-user-invocable: false
-description: Add generative answer nodes (SearchAndSummarizeContent or AnswerQuestionWithAI) to a Copilot Studio topic. Use this instead of /add-node when the user asks to add grounded answers, knowledge search, generative answers, or AI-powered responses — these nodes require specific patterns (ConditionGroup follow-up, knowledge source references, autoSend, responseCaptureType) that /add-node does not cover.
-argument-hint: <topic-name or "new">
-allowed-tools: Bash(node *schema-lookup.bundle.js *), Read, Write, Edit, Glob
-context: fork
-agent: copilot-studio-author
+name: add-generative-answers
+description: >
+  Add generative answer nodes (SearchAndSummarizeContent or AnswerQuestionWithAI) to a Copilot
+  Studio topic. Use this instead of add-node when the user asks to add grounded answers, knowledge
+  search, generative answers, or AI-powered responses ??these nodes require specific patterns
+  (ConditionGroup follow-up, knowledge source references, autoSend, responseCaptureType) that
+  add-node does not cover.
 ---
-
 # Add Generative Answers
 
 Add `SearchAndSummarizeContent` nodes to generate responses grounded in the agent's knowledge sources.
@@ -35,21 +35,21 @@ If the user just wants the agent to answer questions from its knowledge, adding 
 
 3. **Look up the schema** for both nodes:
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js resolve CreateSearchQuery
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js resolve SearchAndSummarizeContent
+   node ../../scripts/schema-lookup.bundle.js resolve CreateSearchQuery
+   node ../../scripts/schema-lookup.bundle.js resolve SearchAndSummarizeContent
    ```
 
 4. **Read `settings.mcs.yml`** to check if `GenerativeActionsEnabled: true`. This determines the best pattern:
-   - **`GenerativeActionsEnabled: true`** → prefer **Pattern 2 (Orchestrator)**: use topic inputs/outputs and let the orchestrator handle the response. This is the best approach for generative-orchestrated agents.
-   - **`GenerativeActionsEnabled: false`** (or not set) → use **Pattern 1 (Direct Response)**: `autoSend: false` + manual SendActivity, or **Pattern 3 (Fallback Search)** for a simple all-knowledge fallback.
-   - **Verbatim/exact content needed** → use **Pattern 4 (Precision Search)**: `SearchKnowledgeSources` + `CreateSearchQuery` for raw results without AI summarization (insurance policies, HR docs, legal text).
+   - **`GenerativeActionsEnabled: true`** ??prefer **Pattern 2 (Orchestrator)**: use topic inputs/outputs and let the orchestrator handle the response. This is the best approach for generative-orchestrated agents.
+   - **`GenerativeActionsEnabled: false`** (or not set) ??use **Pattern 1 (Direct Response)**: `autoSend: false` + manual SendActivity, or **Pattern 3 (Fallback Search)** for a simple all-knowledge fallback.
+   - **Verbatim/exact content needed** ??use **Pattern 4 (Precision Search)**: `SearchKnowledgeSources` + `CreateSearchQuery` for raw results without AI summarization (insurance policies, HR docs, legal text).
 
 5. **Ask the user** to clarify the behavior (if not already clear from their request):
    - Should it search **all knowledge sources** or only **specific ones**?
    - Should **general model knowledge** also be used, or only the configured knowledge sources?
    - Should the response be **sent automatically** to chat, or **processed first** (e.g., custom formatting, adaptive card, combined with other data)?
 
-6. **Always precede `SearchAndSummarizeContent` with `CreateSearchQuery`** to preserve conversational context. Never pass `=System.Activity.Text` directly to `SearchAndSummarizeContent` — the raw last message may lack context (e.g., "tell me more about that"). `CreateSearchQuery` rewrites the input into an optimized search query. Access the result via `Topic.<ResultVar>.SearchQuery`.
+6. **Always precede `SearchAndSummarizeContent` with `CreateSearchQuery`** to preserve conversational context. Never pass `=System.Activity.Text` directly to `SearchAndSummarizeContent` ??the raw last message may lack context (e.g., "tell me more about that"). `CreateSearchQuery` rewrites the input into an optimized search query. Access the result via `Topic.<ResultVar>.SearchQuery`.
 
 7. **Generate unique IDs** for all nodes (format: `<nodeType>_<6-8 random alphanumeric>`).
 
@@ -60,7 +60,7 @@ If the user just wants the agent to answer questions from its knowledge, adding 
 | Node | Use When | Data Source | Output |
 |------|----------|-------------|--------|
 | `SearchAndSummarizeContent` | You want answers grounded in the agent's knowledge sources (websites, SharePoint, Dataverse) | Agent's configured knowledge | AI-summarized response |
-| `SearchKnowledgeSources` | You need verbatim/exact content — insurance policies, legal text, HR docs — where AI summarization could lose details | Agent's configured knowledge | Raw search results (no AI summary) |
+| `SearchKnowledgeSources` | You need verbatim/exact content ??insurance policies, legal text, HR docs ??where AI summarization could lose details | Agent's configured knowledge | Raw search results (no AI summary) |
 | `AnswerQuestionWithAI` | You want a response based only on conversation history and general model knowledge | No external data | AI-generated response |
 
 **Use `SearchAndSummarizeContent`** for the vast majority of cases (what people call "generative answers"). Use `SearchKnowledgeSources` when you need raw, unsummarized results for precision scenarios (pair with `CreateSearchQuery` for better search accuracy). Use `AnswerQuestionWithAI` only when you explicitly want the model to respond without consulting knowledge sources.

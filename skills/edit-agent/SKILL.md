@@ -1,12 +1,10 @@
 ---
-user-invocable: false
-description: Edit Copilot Studio agent settings, instructions, or configuration. Use when the user asks to change agent instructions, display name, conversation starters, AI settings, or generative actions toggle.
-argument-hint: <what to change>
-allowed-tools: Bash(node *schema-lookup.bundle.js *), Read, Edit, Glob
-context: fork
-agent: copilot-studio-author
+name: edit-agent
+description: >
+  Edit Copilot Studio agent settings, instructions, or configuration. Use when the user asks to
+  change agent instructions, display name, conversation starters, AI settings, or generative
+  actions toggle.
 ---
-
 # Edit Agent Settings/Instructions
 
 Modify agent metadata (`agent.mcs.yml`) or configuration (`settings.mcs.yml`).
@@ -20,15 +18,15 @@ Modify agent metadata (`agent.mcs.yml`) or configuration (`settings.mcs.yml`).
    NEVER hardcode an agent name. If multiple agents found, ask which one.
 
 2. **Identify what the user wants to change** and read the appropriate file:
-   - **Instructions, display name, conversation starters, AI settings** → `agent.mcs.yml`
-   - **GenerativeActionsEnabled, authentication, recognizer, capabilities** → `settings.mcs.yml`
+   - **Instructions, display name, conversation starters, AI settings** ??`agent.mcs.yml`
+   - **GenerativeActionsEnabled, authentication, recognizer, capabilities** ??`settings.mcs.yml`
 
 3. **If the user wants to change the AI model**, run the schema lookup tool first:
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/schema-lookup.bundle.js models
+   node ../../scripts/schema-lookup.bundle.js models
    ```
    Use the output to determine the correct `modelNameHint` and `provider` values.
-   **CRITICAL:** Do NOT include `kind` in the model block — the agent-level schema uses `CurrentModelsNoKind`.
+   **CRITICAL:** Do NOT include `kind` in the model block ??the agent-level schema uses `CurrentModelsNoKind`.
 
 4. **Read the current file** before making any changes.
 
@@ -61,10 +59,10 @@ For detailed guidance on writing knowledge-aware instructions, grounding directi
 
 ## Fields to NEVER Modify
 
-- `schemaName` — This is the internal Power Platform identifier. Changing it breaks the agent.
-- `publishedOn` — Managed by the platform.
-- `template` — Managed by the platform.
-- `language` — Changing this can corrupt the agent.
+- `schemaName` ??This is the internal Power Platform identifier. Changing it breaks the agent.
+- `publishedOn` ??Managed by the platform.
+- `template` ??Managed by the platform.
+- `language` ??Changing this can corrupt the agent.
 
 If the user asks to change any of these, warn them.
 

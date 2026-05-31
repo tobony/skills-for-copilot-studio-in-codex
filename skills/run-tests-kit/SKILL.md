@@ -1,15 +1,11 @@
 ---
-user-invocable: false
+name: run-tests-kit
 description: >
-  Run a batch test suite via the Copilot Studio Kit (Dataverse API).
-  Uses the Power CAT Copilot Studio Kit to execute test cases against a published agent
-  and produces pass/fail results with latencies. Requires the Kit installed in the
-  environment, an App Registration with Dataverse permissions, and a published agent.
-allowed-tools: Bash(node *run-tests.js *), Bash(npm install *), Read, Write, Glob, Grep, Edit
-context: fork
-agent: copilot-studio-test
+  Run a batch test suite via the Copilot Studio Kit (Dataverse API). Uses the Power CAT Copilot
+  Studio Kit to execute test cases against a published agent and produces pass/fail results with
+  latencies. Requires the Kit installed in the environment, an App Registration with Dataverse
+  permissions, and a published agent.
 ---
-
 # Run Tests via Copilot Studio Kit
 
 Run a batch test suite against a **published** Copilot Studio agent using the [Power CAT Copilot Studio Kit](https://github.com/microsoft/Power-CAT-Copilot-Studio-Kit).
@@ -28,7 +24,7 @@ The user must have:
 
 2. **If the file doesn't exist**, create it from the template:
    ```bash
-   cp ${CLAUDE_SKILL_DIR}/../../tests/settings-example.json ./tests/settings.json
+   cp ../../tests/settings-example.json ./tests/settings.json
    ```
 
 3. **If values are missing**, ask the user for each missing value. Explain where to find each one:
@@ -62,7 +58,7 @@ The user must have:
 
 1. **Ensure `tests/package.json` exists** in the user's project. If not, copy it:
    ```bash
-   cp ${CLAUDE_SKILL_DIR}/../../tests/package.json ./tests/package.json
+   cp ../../tests/package.json ./tests/package.json
    ```
 
 2. **Install dependencies** if `tests/node_modules/` doesn't exist:
@@ -72,7 +68,7 @@ The user must have:
 
 3. **Run the test script in the background** with a 100-minute timeout (6000000ms):
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../tests/run-tests.js --config-dir ./tests
+   node ../../tests/run-tests.js --config-dir ./tests
    ```
    Use `run_in_background: true` for this command. Save the returned task ID.
 
@@ -103,7 +99,7 @@ The user must have:
 
 ## Phase 3: Analyze Results
 
-1. **Get the results**: `Glob: tests/test-results-*.csv` — read the most recent CSV file (newest by modification time).
+1. **Get the results**: `Glob: tests/test-results-*.csv` ??read the most recent CSV file (newest by modification time).
 
 2. **Parse the CSV columns**:
    | Column | Meaning |
@@ -138,9 +134,9 @@ The user must have:
    - What the proposed change is (show the diff)
 
 3. **Wait for user decision**. The user can:
-   - **Accept all** — apply all proposed changes
-   - **Accept partially** — apply only some changes (ask which ones)
-   - **Reject** — discard proposed changes and discuss alternative approaches
+   - **Accept all** ??apply all proposed changes
+   - **Accept partially** ??apply only some changes (ask which ones)
+   - **Reject** ??discard proposed changes and discuss alternative approaches
 
 4. **Apply accepted changes** using the Edit tool. After applying, remind the user to push and publish again before re-running tests.
 

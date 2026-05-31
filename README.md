@@ -1,5 +1,42 @@
 # Skills for Copilot Studio
 
+> Codex-compatible mirror of [microsoft/skills-for-copilot-studio](https://github.com/microsoft/skills-for-copilot-studio).
+> This repository keeps the upstream plugin content and regenerates Codex metadata with
+> `tools/convert-copilot-studio-for-codex.ps1`.
+
+## Codex Usage
+
+This repo is generated from Microsoft's Claude Code / GitHub Copilot plugin and adds:
+
+- `.codex-plugin/plugin.json`
+- Codex-compatible `name` / `description` frontmatter in every `skills/*/SKILL.md`
+- path rewrites for Claude-specific `${CLAUDE_SKILL_DIR}` references
+
+To refresh from upstream manually:
+
+```powershell
+git remote add upstream https://github.com/microsoft/skills-for-copilot-studio.git
+git fetch upstream main
+git merge upstream/main
+pwsh ./tools/convert-copilot-studio-for-codex.ps1 -PluginRoot .
+git add .
+git commit -m "Sync upstream for Codex"
+git push
+```
+
+The scheduled workflow `.github/workflows/sync-upstream-for-codex.yml` runs the same process daily.
+If upstream changes conflict with local Codex conversion files, fix the merge manually and rerun the
+conversion script before committing.
+
+For local Codex plugin testing, clone this repository to your plugin directory and add a personal
+marketplace entry that points to the local clone. The converter can also write the default local
+marketplace entry:
+
+```powershell
+pwsh ./tools/convert-copilot-studio-for-codex.ps1 -PluginRoot . -WriteMarketplace
+codex plugin add copilot-studio@personal
+```
+
 A plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [GitHub Copilot CLI](https://docs.github.com/en/copilot), and [VS Code](https://code.visualstudio.com/) that enables authoring, testing, and troubleshooting [Microsoft Copilot Studio](https://aka.ms/CopilotStudio) agents through YAML files — directly from your terminal or editor.
 
 ## Prerequisites

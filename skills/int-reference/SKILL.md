@@ -1,9 +1,9 @@
 ---
 name: int-reference
-description: "Reference tables for Copilot Studio YAML authoring: triggers, actions, variables, entities, Power Fx functions, templates. Preloaded by author and advisor agents."
-user-invocable: false
+description: >
+  Reference tables for Copilot Studio YAML authoring: triggers, actions, variables, entities,
+  Power Fx functions, templates. Preloaded by author and advisor agents.
 ---
-
 # Copilot Studio YAML Reference
 
 ## Core File Types
@@ -21,10 +21,10 @@ user-invocable: false
 
 ## Trigger Types
 
-Topics with `OnRecognizedIntent` have two routing mechanisms — which one matters depends on the orchestration mode:
+Topics with `OnRecognizedIntent` have two routing mechanisms ??which one matters depends on the orchestration mode:
 
-- **`modelDescription`** — used by **generative orchestration** (`GenerativeActionsEnabled: true`). The AI orchestrator reads this to decide routing. Primary mechanism for generative agents.
-- **Trigger phrases** (`triggerQueries`) — used by **classic orchestration**. Pattern-matched against the user's utterance. Secondary hints when generative orchestration is enabled.
+- **`modelDescription`** ??used by **generative orchestration** (`GenerativeActionsEnabled: true`). The AI orchestrator reads this to decide routing. Primary mechanism for generative agents.
+- **Trigger phrases** (`triggerQueries`) ??used by **classic orchestration**. Pattern-matched against the user's utterance. Secondary hints when generative orchestration is enabled.
 
 System triggers (`OnConversationStart`, `OnUnknownIntent`, `OnError`, etc.) fire automatically and don't use either mechanism.
 
@@ -41,7 +41,7 @@ System triggers (`OnConversationStart`, `OnUnknownIntent`, `OnError`, etc.) fire
 | `OnToolSelected` | Child agent invocation |
 | `OnKnowledgeRequested` | Custom knowledge source search triggered (YAML-only, no UI) |
 | `OnGeneratedResponse` | Intercept AI-generated response before sending |
-| `OnOutgoingMessage` | **Non-functional (2026-03-15)** — exists in schema but does not fire at runtime. Do not use. |
+| `OnOutgoingMessage` | **Non-functional (2026-03-15)** ??exists in schema but does not fire at runtime. Do not use. |
 
 ### YAML-Only Features
 
@@ -78,7 +78,7 @@ These features work at runtime but are **not visible in the Copilot Studio UI**.
 
 Connector actions (`kind: TaskDialog`) invoke external connector operations. They are stored in `actions/` and require a connection reference in `connectionreferences.mcs.yml`.
 
-**Use `/add-action` to create new actions from available connectors.** The schema describes the structural properties of `TaskDialog` and `InvokeConnectorTaskAction`, but the specific inputs and outputs for each connector operation are connector-specific — use the connector lookup script (`connector-lookup.bundle.js`) to get the full operation details.
+**Use `/add-action` to create new actions from available connectors.** The schema describes the structural properties of `TaskDialog` and `InvokeConnectorTaskAction`, but the specific inputs and outputs for each connector operation are connector-specific ??use the connector lookup script (`connector-lookup.bundle.js`) to get the full operation details.
 
 ### Action Structure
 
@@ -93,7 +93,7 @@ Connector actions (`kind: TaskDialog`) invoke external connector operations. The
 | `action.connectionReference` | Logical name of the connection (registered in `connectionreferences.mcs.yml`) |
 | `action.connectionProperties.mode` | `Maker` (maker's credentials) or `Invoker` (end user's credentials) |
 | `action.operationId` | The connector's specific operation identifier |
-| `outputMode` | Usually `All` — exports all operation outputs |
+| `outputMode` | Usually `All` ??exports all operation outputs |
 
 ### Input Types
 
@@ -104,10 +104,10 @@ Connector actions (`kind: TaskDialog`) invoke external connector operations. The
 
 ### `$`-Prefixed Property Names (SharePoint, OData)
 
-Some connectors (notably SharePoint) use OData parameters like `$filter`, `$orderby`, `$top`. These require special quoting in **TaskDialog** YAML — both single and double quotes:
+Some connectors (notably SharePoint) use OData parameters like `$filter`, `$orderby`, `$top`. These require special quoting in **TaskDialog** YAML ??both single and double quotes:
 
 ```yaml
-# TaskDialog (actions/*.mcs.yml) — CORRECT
+# TaskDialog (actions/*.mcs.yml) ??CORRECT
 - kind: ManualTaskInput
   propertyName: "'$filter'"
   value: "Status eq 'Active'"
@@ -115,10 +115,10 @@ Some connectors (notably SharePoint) use OData parameters like `$filter`, `$orde
 
 `"'$filter'"` means: the outer `""` are YAML string delimiters; the inner `''` are part of the literal value sent to the runtime. Using `$filter`, `"$filter"`, or `'$filter'` alone will fail.
 
-**InvokeConnectorAction** (inline in topics) uses a different format — the `parameters/` prefix with no inner single quotes:
+**InvokeConnectorAction** (inline in topics) uses a different format ??the `parameters/` prefix with no inner single quotes:
 
 ```yaml
-# InvokeConnectorAction (inside topics) — CORRECT
+# InvokeConnectorAction (inside topics) ??CORRECT
 - kind: InvokeConnectorAction
   operationId: GetItems
   input:
@@ -143,7 +143,7 @@ Never mix these two formats.
 | `System.Recognizer.SelectedIntent` | User's selected intent |
 | `System.SearchQuery` | AI-rewritten search query (available in `OnKnowledgeRequested`) |
 | `System.KeywordSearchQuery` | Keyword version of search query (available in `OnKnowledgeRequested`) |
-| `System.SearchResults` | Table to populate with custom search results — schema: Content, ContentLocation, Title (available in `OnKnowledgeRequested`) |
+| `System.SearchResults` | Table to populate with custom search results ??schema: Content, ContentLocation, Title (available in `OnKnowledgeRequested`) |
 | `System.ContinueResponse` | Set to `false` in `OnGeneratedResponse` to suppress auto-send |
 | `System.Response.FormattedText` | The AI-generated response text (available in `OnGeneratedResponse`) |
 
@@ -155,7 +155,7 @@ Never mix these two formats.
 | `Global.<name>` | Global variable | Entire conversation (defined in `variables/` folder) |
 | `System.<name>` | System variable | Built-in, read-only |
 
-Global variables are defined as YAML files in `variables/<Name>.mcs.yml` (kind: `GlobalVariableComponent`). `aIVisibility` accepts `UseInAIContext` (orchestrator can read and reason about the value) or `Hidden` (orchestrator unaware — use for flags and internal bookkeeping).
+Global variables are defined as YAML files in `variables/<Name>.mcs.yml` (kind: `GlobalVariableComponent`). `aIVisibility` accepts `UseInAIContext` (orchestrator can read and reason about the value) or `Hidden` (orchestrator unaware ??use for flags and internal bookkeeping).
 
 ## Prebuilt Entities
 
@@ -169,7 +169,7 @@ Global variables are defined as YAML files in `variables/<Name>.mcs.yml` (kind: 
 
 ## Power Fx Expression Reference
 
-**Only use functions from the supported list below.** Copilot Studio supports a subset of Power Fx — using unsupported functions will cause errors.
+**Only use functions from the supported list below.** Copilot Studio supports a subset of Power Fx ??using unsupported functions will cause errors.
 
 ```yaml
 # Arithmetic
@@ -222,7 +222,7 @@ These are **all** the Power Fx functions available in Copilot Studio. Do NOT use
 
 ## Available Templates
 
-Templates are bundled with the plugin. Skills that use templates reference them via `${CLAUDE_SKILL_DIR}/../../templates/`.
+Templates are bundled with the plugin. Skills that use templates reference them via `../../templates/`.
 
 | Template | File | Pattern |
 |----------|------|---------|

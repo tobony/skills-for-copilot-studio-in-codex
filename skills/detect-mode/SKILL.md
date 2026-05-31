@@ -1,11 +1,9 @@
 ---
-user-invocable: false
-description: Detect a Copilot Studio agent's authentication mode (DirectLine vs M365) by querying Dataverse. Returns the mode and connection details needed to chat.
-argument-hint: [--agent-dir <path>]
-allowed-tools: Bash(node *chat-with-agent.bundle.js --detect-only *), Read, Glob
-agent: copilot-studio-test
+name: detect-mode
+description: >
+  Detect a Copilot Studio agent's authentication mode (DirectLine vs M365) by querying Dataverse.
+  Returns the mode and connection details needed to chat.
 ---
-
 # Detect Agent Authentication Mode
 
 Query the Dataverse `bots` entity to determine whether the agent uses DirectLine (no auth / manual auth) or the Copilot Studio SDK (integrated auth / Entra ID SSO).
@@ -15,7 +13,7 @@ Query the Dataverse `bots` entity to determine whether the agent uses DirectLine
 1. Run the detect-only command:
 
    ```bash
-   node ${CLAUDE_SKILL_DIR}/../../scripts/chat-with-agent.bundle.js --detect-only $ARGUMENTS
+   node ../../scripts/chat-with-agent.bundle.js --detect-only $ARGUMENTS
    ```
 
    If the agent is not at the project root, pass `--agent-dir <path>`.
@@ -34,7 +32,7 @@ Query the Dataverse `bots` entity to determine whether the agent uses DirectLine
    ```
    The agent uses **integrated authentication (Entra ID SSO)**. An App Registration Client ID is needed for `/copilot-studio:chat-sdk`.
 
-3. Return the result to the caller. Do not proceed to chat — that is a separate step.
+3. Return the result to the caller. Do not proceed to chat ??that is a separate step.
 
 ## Error Handling
 

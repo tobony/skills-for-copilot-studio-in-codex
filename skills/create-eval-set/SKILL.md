@@ -1,15 +1,11 @@
 ---
-user-invocable: false
+name: create-eval-set
 description: >
-  Create a test set CSV file for import into Copilot Studio's in-product Evaluate tab.
-  Reads the agent's topics, instructions, and knowledge sources to generate meaningful
-  test cases with appropriate graders (General quality, Compare meaning, Exact match, etc.).
-  Use when the user asks to create, prepare, or generate evaluation test cases for their agent.
-allowed-tools: Read, Glob, Grep, Write
-context: fork
-agent: copilot-studio-test
+  Create a test set CSV file for import into Copilot Studio's in-product Evaluate tab. Reads the
+  agent's topics, instructions, and knowledge sources to generate meaningful test cases with
+  appropriate graders (General quality, Compare meaning, Exact match, etc.). Use when the user
+  asks to create, prepare, or generate evaluation test cases for their agent.
 ---
-
 # Create Evaluation Test Set
 
 Create a test set CSV file that can be imported into Copilot Studio's **Evaluate** tab for in-product agent evaluation.
@@ -18,11 +14,11 @@ Create a test set CSV file that can be imported into Copilot Studio's **Evaluate
 
 Read the agent's YAML files to understand what it does:
 
-1. `Glob: **/agent.mcs.yml` — find the agent
-2. Read `agent.mcs.yml` — get the agent's instructions, description, and capabilities
-3. Read `settings.mcs.yml` — check orchestration mode (generative vs classic)
-4. `Glob: **/topics/*.mcs.yml` — list all topics
-5. Read key topics (especially non-system ones) — understand trigger phrases, conversation flows, expected behaviors
+1. `Glob: **/agent.mcs.yml` ??find the agent
+2. Read `agent.mcs.yml` ??get the agent's instructions, description, and capabilities
+3. Read `settings.mcs.yml` ??check orchestration mode (generative vs classic)
+4. `Glob: **/topics/*.mcs.yml` ??list all topics
+5. Read key topics (especially non-system ones) ??understand trigger phrases, conversation flows, expected behaviors
 6. Check for knowledge sources, actions, and connected tools
 
 ## Phase 2: Design Test Cases
@@ -37,11 +33,11 @@ Create test cases that cover:
 | **Edge cases** | Out-of-scope, ambiguous, off-topic | "Tell me a joke", "Book a flight for me" |
 | **Boundary testing** | Things the agent should NOT do | Actions beyond its capabilities |
 
-Aim for 10–25 test cases with good coverage across categories.
+Aim for 10??5 test cases with good coverage across categories.
 
 ## Phase 3: Write the Expected Responses
 
-The CSV import only supports two columns: `question` and `expectedResponse`. **Test methods cannot be set via CSV import** — they are configured in the UI after import. The default test method (General quality) is applied to all imported test cases.
+The CSV import only supports two columns: `question` and `expectedResponse`. **Test methods cannot be set via CSV import** ??they are configured in the UI after import. The default test method (General quality) is applied to all imported test cases.
 
 Write expected responses with this in mind:
 - For questions where you want **General quality** grading: write behavioral descriptions ("The response should recommend hotels in Paris with relevant details")
@@ -53,7 +49,7 @@ Write expected responses with this in mind:
 | Test method | What it measures | Requires expected response? |
 |-------------|-----------------|---------------------------|
 | **General quality** (default) | AI-graded quality: relevance, completeness, groundedness, abstention | No (but recommended as a rubric) |
-| **Compare meaning** | Semantic similarity — compares meaning/intent | Yes |
+| **Compare meaning** | Semantic similarity ??compares meaning/intent | Yes |
 | **Text similarity** | Cosine similarity of text | Yes, configurable pass threshold |
 | **Exact match** | Character-for-character match | Yes |
 | **Keyword match** | Response contains expected keywords/phrases | Yes (keywords added in UI) |
@@ -77,7 +73,7 @@ Write the CSV file using the Write tool. The format must be:
 | `question` | Yes | The user message to send to the agent. Max **1,000 characters**. |
 | `expectedResponse` | No | The expected response or behavioral rubric. Leave empty if not needed. |
 
-**Important:** The `Testing method` column is **not supported on import** — it is ignored. All imported test cases get the default test method (General quality). Configure other test methods in the UI after import.
+**Important:** The `Testing method` column is **not supported on import** ??it is ignored. All imported test cases get the default test method (General quality). Configure other test methods in the UI after import.
 
 ### Rules
 - Max **100 questions** per test set
@@ -94,12 +90,12 @@ Write the CSV file using the Write tool. The format must be:
 "Find me a hotel in Paris","The response should include hotel recommendations in Paris with relevant details like names, locations, or prices."
 ```
 
-**Realistic reply** (for Compare meaning — set method in UI after import):
+**Realistic reply** (for Compare meaning ??set method in UI after import):
 ```csv
 "Hi there","Hello! How can I help you today?"
 ```
 
-**Exact expected text** (for Exact match — set method in UI after import):
+**Exact expected text** (for Exact match ??set method in UI after import):
 ```csv
 "What is 2+2?","4"
 ```

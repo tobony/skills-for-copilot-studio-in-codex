@@ -1,0 +1,37 @@
+{
+    "name":  "copilot-studio",
+    "version":  "1.0.11",
+    "description":  "Microsoft Copilot Studio YAML authoring toolkit. Create, edit, validate, and test Copilot Studio agents using YAML files.",
+    "author":  {
+                   "name":  "Microsoft Copilot Studio CAT Team"
+               },
+    "repository":  "https://github.com/tobony/skills-for-copilot-studio-in-codex",
+    "homepage":  "https://github.com/microsoft/skills-for-copilot-studio",
+    "license":  "MIT",
+    "keywords":  [
+                     "copilot-studio",
+                     "microsoft",
+                     "yaml",
+                     "agent-authoring",
+                     "power-platform",
+                     "codex"
+                 ],
+    "skills":  "./skills/",
+    "interface":  {
+                      "displayName":  "Copilot Studio",
+                      "shortDescription":  "Build and validate Copilot Studio YAML agents.",
+                      "longDescription":  "Codex-compatible conversion of Microsoft\u0027s Skills for Copilot Studio plugin for creating, editing, validating, testing, and troubleshooting Copilot Studio YAML agents.",
+                      "developerName":  "Microsoft Copilot Studio CAT Team",
+                      "category":  "Productivity",
+                      "capabilities":  [
+                                           "Interactive",
+                                           "Write"
+                                       ],
+                      "websiteURL":  "https://github.com/tobony/skills-for-copilot-studio-in-codex",
+                      "defaultPrompt":  [
+                                            "Review my Copilot Studio agent YAML.",
+                                            "Create a Copilot Studio topic.",
+                                            "Validate this Copilot Studio workspace."
+                                        ]
+                  }
+}
